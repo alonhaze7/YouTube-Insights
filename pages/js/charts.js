@@ -1,6 +1,6 @@
 // ===== Chart.js Global Config =====
-Chart.defaults.color = '#94a3b8';
-Chart.defaults.borderColor = '#334155';
+Chart.defaults.color = '#475569';
+Chart.defaults.borderColor = '#e2e8f0';
 Chart.defaults.font.family = '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif';
 
 // ===== W1: KPI Sparkline =====
@@ -13,7 +13,7 @@ if (sparklineCtx) {
             datasets: [{
                 data: [72000, 85000, 91000, 78000, 95000, 102000, 110000],
                 borderColor: '#3b82f6',
-                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                backgroundColor: 'rgba(37, 99, 235, 0.1)',
                 fill: true,
                 tension: 0.4,
                 borderWidth: 2,
@@ -45,7 +45,7 @@ if (pacingCtx) {
                     label: 'Actual Views',
                     data: actualPace,
                     borderColor: '#3b82f6',
-                    backgroundColor: 'rgba(59, 130, 246, 0.05)',
+                    backgroundColor: 'rgba(37, 99, 235, 0.08)',
                     fill: true,
                     tension: 0.3,
                     borderWidth: 2.5
@@ -53,7 +53,7 @@ if (pacingCtx) {
                 {
                     label: 'Ideal Pace',
                     data: idealPace,
-                    borderColor: '#64748b',
+                    borderColor: '#94a3b8',
                     borderDash: [8, 4],
                     fill: false,
                     tension: 0,
@@ -124,7 +124,7 @@ if (qualityCtx) {
                 {
                     label: 'Views',
                     data: [320000, 380000, 420000, 490000, 560000, 620000],
-                    backgroundColor: 'rgba(59, 130, 246, 0.7)',
+                    backgroundColor: 'rgba(37, 99, 235, 0.7)',
                     yAxisID: 'y'
                 },
                 {
@@ -311,7 +311,7 @@ if (scatterCtx) {
                 },
                 y: {
                     title: { display: true, text: 'Avg Duration (sec)' },
-                    grid: { color: 'rgba(51, 65, 85, 0.5)' }
+                    grid: { color: 'rgba(226, 232, 240, 0.8)' }
                 }
             }
         }
@@ -355,8 +355,8 @@ if (acqCtx) {
                 {
                     label: 'Views per Subscriber',
                     data: [145, 138, 142, 128, 122, 115, 108, 98],
-                    borderColor: '#22c55e',
-                    backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                    borderColor: '#16a34a',
+                    backgroundColor: 'rgba(22, 163, 74, 0.1)',
                     fill: true,
                     tension: 0.3,
                     borderWidth: 2.5
@@ -364,7 +364,7 @@ if (acqCtx) {
                 {
                     label: '4-Week Moving Avg',
                     data: [null, null, null, 138, 132, 127, 118, 111],
-                    borderColor: '#64748b',
+                    borderColor: '#94a3b8',
                     borderDash: [6, 3],
                     fill: false,
                     tension: 0.3,
@@ -499,11 +499,11 @@ if (lifecycleCtx) {
             scales: {
                 x: {
                     title: { display: true, text: 'Video Age (days)' },
-                    grid: { color: 'rgba(51, 65, 85, 0.3)' }
+                    grid: { color: 'rgba(226, 232, 240, 0.8)' }
                 },
                 y: {
                     title: { display: true, text: 'Engagement Rate %' },
-                    grid: { color: 'rgba(51, 65, 85, 0.3)' }
+                    grid: { color: 'rgba(226, 232, 240, 0.8)' }
                 }
             }
         }

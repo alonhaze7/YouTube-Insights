@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Insights - Decision Engine Dashboard</title>
+    <link rel="stylesheet" href="pages/css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-left">
+                <div class="logo">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                        <rect width="24" height="24" rx="4" fill="#FF0000"/>
+                        <polygon points="10,8 16,12 10,16" fill="white"/>
+                    </svg>
+                    <h1>YouTube Insights <span class="subtitle">Decision Engine</span></h1>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="filter-bar">
+                    <select id="dateRange" class="filter-select">
+                        <option value="7">Last 7 Days</option>
+                        <option value="14">Last 14 Days</option>
+                        <option value="30" selected>Last 30 Days</option>
+                        <option value="90">Last 90 Days</option>
+                    </select>
+                    <select id="channelFilter" class="filter-select">
+                        <option value="all">All Channels</option>
+                        <option value="main">Main Channel</option>
+                        <option value="shorts">Shorts Channel</option>
+                        <option value="tutorials">Tutorials</option>
+                    </select>
+                    <select id="countryFilter" class="filter-select">
+                        <option value="all">All Countries</option>
+                        <option value="US">United States</option>
+                        <option value="UK">United Kingdom</option>
+                        <option value="IN">India</option>
+                        <option value="BR">Brazil</option>
+                    </select>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <nav class="page-tabs">
+            <button class="tab active" data-page="page1">
+                <span class="tab-icon">&#128200;</span>
+                Performance & Budget
+            </button>
+            <button class="tab" data-page="page2">
+                <span class="tab-icon">&#127758;</span>
+                Audience & Geo
+            </button>
+            <button class="tab" data-page="page3">
+                <span class="tab-icon">&#127916;</span>
+                Content & Creative
+            </button>
+            <button class="tab" data-page="page4">
+                <span class="tab-icon">&#9881;</span>
+                Efficiency & Frequency
+            </button>
+        </nav>
+
+        <!-- Page 1: Performance & Budget -->
+        <div class="page active" id="page1">
+            <div class="page-title">
+                <h2>Performance & Budget Optimization</h2>
+                <p class="page-desc">Decisions: BUDGET_SET | PACING_CHANGE | BUDGET_REALLOCATE | BID_STRATEGY_CHANGE</p>
+            </div>
+
+            <div class="widget-grid">
+                <!-- KPI Cards Row -->
+                <div class="widget kpi-widget span-4">
+                    <div class="widget-header">
+                        <span class="widget-number">W1</span>
+                        <span class="decision-badge budget-set">BUDGET_SET</span>
+                    </div>
+                    <div class="widget-question">"What is my total view volume this period vs. target?"</div>
+                    <div class="kpi-content">
+                        <div class="kpi-value">2.4M</div>
+                        <div class="kpi-delta positive">+18.2% vs prior period</div>
+                        <div class="kpi-target">Target: 2.8M (86% achieved)</div>
+                        <canvas id="kpi-sparkline" height="40"></canvas>
+                    </div>
+                    <div class="widget-decision">
+                        <div class="decision-indicator yellow"></div>
+                        <span>ACTION: Prepare to increase budget 10% - pacing slightly behind</span>
+                    </div>
+                </div>
+
+                <div class="widget span-8">
+                    <div class="widget-header">
+                        <span class="widget-number">W2</span>
+                        <span class="decision-badge pacing">PACING_CHANGE</span>
+                    </div>
+                    <div class="widget-question">"Is my content pacing on track to hit period goals?"</div>
+                    <div class="chart-container">
+                        <canvas id="pacingChart"></canvas>
+                    </div>
+                    <div class="widget-decision">
+                        <div class="decision-indicator yellow"></div>
+                        <span>ACTION: 12% behind pace - consider accelerating promotion spend</span>
+                    </div>
+                </div>
+
+                <div class="widget span-6">
+                    <div class="widget-header">
+                        <span class="widget-number">W3</span>
+                        <span class="decision-badge budget-reallocate">BUDGET_REALLOCATE</span>
+                    </div>
+                    <div class="widget-question">"Which channels consume budget efficiently?"</div>
+                    <div class="chart-container">
+                        <canvas id="channelEfficiency"></canvas>
+                    </div>
+                    <div class="widget-decision">
+                        <div class="decision-indicator red"></div>
+                        <span>ACTION: Reallocate 30% from "Shorts" to "Main Channel" - 4x better efficiency</span>
+                    </div>
+                </div>
+
+                <div class="widget span-6">
+                    <div class="widget-header">
+                        <span class="widget-number">W4</span>
+                        <span class="decision-badge bid-strategy">BID_STRATEGY_CHANGE</span>
+                    </div>
+                    <div class="widget-question">"Are we getting quality views or just volume?"</div>
+                    <div class="chart-container">
+                        <canvas id="viewQuality"></canvas>
+                    </div>
+                    <div class="widget-decision">
+                        <div class="decision-indicator red"></div>
+                        <span>ACTION: Views up but duration down 22% - switch to maximize watch-time bid strategy</span>
+                    </div>
+                </div>
+
+                <div class="widget span-12">
+                    <div class="widget-header">
+                        <span class="widget-number">W5</span>
+                        <span class="decision-badge budget-set">BUDGET_SET</span>
+                    </div>
+                    <div class="widget-question">"What's my net subscriber growth trajectory?"</div>
+                    <div class="chart-container">
+                        <canvas id="subscriberWaterfall"></canvas>
+                    </div>
+                    <div class="widget-decision">
+                        <div class="decision-indicator green"></div>
+                        <span>ACTION: Net positive 4 consecutive weeks - maintain current acquisition budget</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page 2: Audience & Geo -->
+        <div class="page" id="page2">
+            <div class="page-title">
+                <h2>Audience & Geographic Targeting</h2>
+                <p class="page-desc">Decisions: GEO_TARGET | BID_ADJUST | SCHEDULE_DAYPART | AUDIENCE_EXPAND | AUDIENCE_SUPPRESS</p>
+            </div>
+
+            <div class="widget-grid">
+                <div class="widget span-7">
+                    <div class="widget-header">
+                        <span class="widget-number">W6</span>
+                        <span class="decision-badge geo">GEO_TARGET</span>
+                    </div>
+                    <div class="widget-question">"Where is my audience actually watching from?"</div>
+                    <div class="geo-map" id="geoMap">
+                        <div class="map-placeholder">
+                            <div class="map-legend">
+                                <div class="legend-item"><span class="dot" style="background:#1e3a5f"></span> High Views (>100K)</div>
+                                <div class="legend-item"><span class="dot" style="background:#3b82f6"></span> Medium (50-100K)</div>
+                                <div class="legend-item"><span class="dot" style="background:#93c5fd"></span> Low (<50K)</div>
+                                <div class="legend-item"><span class="dot" style="background:#ffd700; border: 2px solid #f59e0b"></span> Opportunity (No targeting)</div>
+                            </div>
+                            <table class="geo-table">
+                                <tr><td>&#127482;&#127480; United States</td><td class="num">845K views</td><td><span class="status-badge green">Targeted</span></td></tr>
+                                <tr><td>&#127470;&#127475; India</td><td class="num">612K views</td><td><span class="status-badge green">Targeted</span></td></tr>
+                                <tr><td>&#127463;&#127479; Brazil</td><td class="num">298K views</td><td><span class="status-badge gold">NOT Targeted</span></td></tr>
+                                <tr><td>&#127468;&#127463; United Kingdom</td><td class="num">187K views</td><td><span class="status-badge green">Targeted</span></td></tr>
+                                <tr><td>&#127465;&#127466; Germany</td><td class="num">142K views</td><td><span class="status-badge gold">NOT Targeted</span></td></tr>
+                                <tr><td>&#127467;&#127479; France</td><td class="num">89K views</td><td><span class="status-badge green">Targeted</span></td></tr>
+                                <tr><td>&#127471;&#127477; Japan</td><td class="num">76K views</td><td><span class="status-badge red">Low ROI</span></td></tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="widget-decision">
+                        <div class="decision-indicator green"></div>
+                        <span>ACTION: Add Brazil & Germany to targeting - 440K untapped views with no active spend</span>
+                    </div>
+                </div>
+
+                <div class="widget span-5">
+                    <div class="widget-header">
+                        <span class="widget-number">W7</span>
+                        <span class="decision-badge bid">BID_ADJUST</span>
+                    </div>
+                    <div class="widget-question">"Which geos have the most engaged audiences?"</div>
+                    <div class="chart-container">
+                        <canvas id="geoEngagement"></canvas>
+                    </div>
+                    <div class="widget-decision">
+                        <div class="decision-indicator green"></div>
+                        <span>ACTION: Increase India bid +20% (7.2% engagement). Decrease Japan bid -15% (1.1%)</span>
+                    </div>
+                </div>
+
+                <div class="widget span-6">
+                    <div class="widget-header">
+                        <span class="widget-number">W8</span>
+                        <span class="decision-badge schedule">SCHEDULE_DAYPART</span>
+                    </div>
+                    <div class="widget-question">"When is my audience most active?"</div>
+                    <div class="heatmap-container" id="activityHeatmap">
+                        <table class="heatmap-table">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>6am</th><th>9am</th><th>12pm</th><th>3pm</th><th>6pm</th><th>9pm</th><th>12am</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td class="day">Mon</td><td class="h2"></td><td class="h3"></td><td class="h4"></td><td class="h3"></td><td class="h5"></td><td class="h5"></td><td class="h2"></td></tr>
+                                <tr><td class="day">Tue</td><td class="h2"></td><td class="h3"></td><td class="h4"></td><td class="h4"></td><td class="h5"></td><td class="h5"></td><td class="h3"></td></tr>
+                                <tr><td class="day">Wed</td><td class="h1"></td><td class="h3"></td><td class="h3"></td><td class="h4"></td><td class="h5"></td><td class="h4"></td><td class="h2"></td></tr>
+                                <tr><td class="day">Thu</td><td class="h2"></td><td class="h3"></td><td class="h4"></td><td class="h4"></td><td class="h5"></td><td class="h5"></td><td class="h3"></td></tr>
+                                <tr><td class="day">Fri</td><td class="h1"></td><td class="h2"></td><td class="h3"></td><td class="h4"></td><td class="h5"></td><td class="h5"></td><td class="h4"></td></tr>
+                                <tr><td class="day">Sat</td><td class="h1"></td><td class="h2"></td><td class="h4"></td><td class="h5"></td><td class="h5"></td><td class="h4"></td><td class="h3"></td></tr>
+                                <tr><td class="day">Sun</td><td class="h1"></td><td class="h2"></td><td class="h3"></td><td class="h4"></td><td class="h5"></td><td class="h4"></td><td class="h2"></td></tr>
+                            </tbody>
+                        </table>
+                        <div class="heatmap-legend">
+                            <span>Low</span>
+                            <div class="legend-gradient"></div>
+                            <span>High</span>
+                        </div>
+                    </div>
+                    <div class="widget-decision">
+                        <div class="decision-indicator green"></div>
+                        <span>ACTION: Concentrate 70% budget in 6PM-12AM slots. Exclude 6AM-9AM weekdays.</span>
+                    </div>
+                </div>
+
+                <div class="widget span-6">
+                    <div class="widget-header">
+                        <span class="widget-number">W9</span>
+                        <span class="decision-badge audience-expand">AUDIENCE_EXPAND</span>
+                    </div>
+                    <div class="widget-question">"Which geos are driving subscriber growth?"</div>
+                    <div class="chart-container">
+                        <canvas id="subGrowthGeo"></canvas>
+                    </div>
+                    <div class="widget-decision">
+                        <div class="decision-indicator green"></div>
+                        <span>ACTION: Create lookalike audiences in India & Brazil - highest net sub growth</span>
+                    </div>
+                </div>
+
+                <div class="widget span-12">
+                    <div class="widget-header">
+                        <span class="widget-number">W10</span>
+                        <span class="decision-badge audience-suppress">AUDIENCE_SUPPRESS</span>
+                    </div>
+                    <div class="widget-question">"Which audiences are rejecting my content?"</div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Country</th>
+                                <th>Views</th>
+                                <th>Likes</th>
+                                <th>Dislikes</th>
+                                <th>Like Ratio</th>
+                                <th>Dislike Rate</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="row-red">
+                                <td>&#127471;&#127477; Japan</td><td>76,200</td><td>1,204</td><td>892</td><td>57.4%</td><td class="danger">11.7%</td>
+                                <td><span class="action-badge suppress">SUPPRESS</span></td>
+                            </tr>
+                            <tr class="row-red">
+                                <td>&#127472;&#127479; South Korea</td><td>34,100</td><td>890</td><td>412</td><td>68.4%</td><td class="danger">6.2%</td>
+                                <td><span class="action-badge suppress">SUPPRESS</span></td>
+                            </tr>
+                            <tr class="row-yellow">
+                                <td>&#127465;&#127466; Germany</td><td>142,000</td><td>5,680</td><td>1,420</td><td>80.0%</td><td class="warning">3.8%</td>
+                                <td><span class="action-badge monitor">MONITOR</span></td>
+                            </tr>
+                            <tr class="row-green">
+                                <td>&#127470;&#127475; India</td><td>612,000</td><td>43,900</td><td>3,100</td><td>93.4%</td><td class="healthy">0.5%</td>
+                                <td><span class="action-badge healthy">HEALTHY</span></td>
+                            </tr>
+                            <tr class="row-green">
+                                <td>&#127482;&#127480; United States</td><td>845,000</td><td>59,200</td><td>4,200</td><td>93.4%</td><td class="healthy">0.5%</td>
+                                <td><span class="action-badge healthy">HEALTHY</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="widget-decision">
+                        <div class="decision-indicator red"></div>
+                        <span>ACTION: Suppress Japan (11.7% dislike rate) & South Korea (6.2%) - content-market mismatch</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page 3: Content & Creative -->
+        <div class="page" id="page3">
+            <div class="page-title">
+                <h2>Content & Creative Performance</h2>
+                <p class="page-desc">Decisions: CREATIVE_MANAGE | PLACEMENT_MANAGE | STATUS_CHANGE | KEYWORD_MANAGE | SIGNAL_CONFIG</p>
+            </div>
+
+            <div class="widget-grid">
+                <div class="widget span-7">
+                    <div class="widget-header">
+                        <span class="widget-number">W11</span>
+                        <span class="decision-badge creative">CREATIVE_MANAGE</span>
+                    </div>
+                    <div class="widget-question">"Which videos hook AND retain viewers?"</div>
+                    <div class="chart-container">
+                        <canvas id="videoScatter"></canvas>
+                    </div>
+                    <div class="widget-decision">
+                        <div class="decision-indicator green"></div>
+                        <span>ACTION: Promote "AI Tutorial #4" (top-right). Pause "Quick Tip #12" (bottom-left).</span>
+                    </div>
+                </div>
+
+                <div class="widget span-5">
+                    <div class="widget-header">
+                        <span class="widget-number">W12</span>
+                        <span class="decision-badge placement">PLACEMENT_MANAGE</span>
+                    </div>
+                    <div class="widget-question">"Which creatives generate the most interaction?"</div>
+                    <div class="chart-container">
+                        <canvas id="engagementByVideo"></canvas>
+                    </div>
+                    <div class="widget-decision">
+                        <div class="decision-indicator green"></div>
+                        <span>ACTION: Extend top 3 to homepage placement. Rotate out bottom 2.</span>
+                    </div>
+                </div>
+
+                <div class="widget span-12">
+                    <div class="widget-header">
+                        <span class="widget-number">W13</span>
+                        <span class="decision-badge status">STATUS_CHANGE</span>
+                    </div>
+                    <div class="widget-question">"Which specific videos should I pause, scale, or replace?"</div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Video</th>
+                                <th>Views</th>
+                                <th>Avg Duration</th>
+                                <th>Eng. Rate</th>
+                                <th>Dislike %</th>
+                                <th>7d Trend</th>
+                                <th>Decision</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="row-green">
+                                <td>AI Tutorial Series #4</td><td>342K</td><td>4:32</td><td>8.2%</td><td>0.3%</td>
+                                <td class="trend-up">+34%</td>
+                                <td><span class="action-badge scale">SCALE UP</span></td>
+                            </tr>
+                            <tr class="row-green">
+                                <td>Product Deep Dive</td><td>189K</td><td>3:48</td><td>6.7%</td><td>0.8%</td>
+                                <td class="trend-up">+22%</td>
+                                <td><span class="action-badge scale">SCALE UP</span></td>
+                            </tr>
+                            <tr>
+                                <td>Weekly Recap Ep.12</td><td>67K</td><td>2:15</td><td>3.4%</td><td>1.2%</td>
+                                <td class="trend-flat">+2%</td>
+                                <td><span class="action-badge monitor">MAINTAIN</span></td>
+                            </tr>
+                            <tr class="row-yellow">
+                                <td>Behind the Scenes</td><td>45K</td><td>1:52</td><td>2.1%</td><td>2.8%</td>
+                                <td class="trend-down">-15%</td>
+                                <td><span class="action-badge monitor">WATCH</span></td>
+                            </tr>
+                            <tr class="row-red">
+                                <td>Quick Tip #12</td><td>12K</td><td>0:45</td><td>1.1%</td><td>6.2%</td>
+                                <td class="trend-down">-38%</td>
+                                <td><span class="action-badge suppress">PAUSE</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="widget-decision">
+                        <div class="decision-indicator red"></div>
+                        <span>ACTION: Pause "Quick Tip #12" immediately (6.2% dislike, -38% trend). Scale "AI Tutorial #4" budget +50%.</span>
+                    </div>
+                </div>
+
+                <div class="widget span-7">
+                    <div class="widget-header">
+                        <span class="widget-number">W14</span>
+                        <span class="decision-badge keyword">KEYWORD_MANAGE</span>
+                    </div>
+                    <div class="widget-question">"Which content topics drive the most traction?"</div>
+                    <div class="treemap-container">
+                        <div class="treemap-grid">
+                            <div class="treemap-cell large green-cell">AI / Machine Learning<br><small>520K views | 7.4% eng</small></div>
+                            <div class="treemap-cell medium green-cell">Tutorial<br><small>340K | 6.1%</small></div>
+                            <div class="treemap-cell medium yellow-cell">Product Review<br><small>280K | 3.2%</small></div>
+                            <div class="treemap-cell small green-cell">Deep Dive<br><small>189K | 6.7%</small></div>
+                            <div class="treemap-cell small red-cell">Quick Tips<br><small>95K | 1.4%</small></div>
+                            <div class="treemap-cell tiny yellow-cell">BTS<br><small>45K | 2.1%</small></div>
+                        </div>
+                    </div>
+                    <div class="widget-decision">
+                        <div class="decision-indicator green"></div>
+                        <span>ACTION: Increase bids on "AI/ML" keywords +25%. Remove "Quick Tips" keywords.</span>
+                    </div>
+                </div>
+
+                <div class="widget span-5">
+                    <div class="widget-header">
+                        <span class="widget-number">W15</span>
+                        <span class="decision-badge signal">SIGNAL_CONFIG</span>
+                    </div>
+                    <div class="widget-question">"Where is the engagement funnel leaking?"</div>
+                    <div class="funnel-container">
+                        <div class="funnel-stage" style="width: 100%">
+                            <span class="funnel-label">Views</span>
+                            <span class="funnel-value">2.4M</span>
+                        </div>
+                        <div class="funnel-conversion">3.8% conversion</div>
+                        <div class="funnel-stage" style="width: 72%">
+                            <span class="funnel-label">Likes</span>
+                            <span class="funnel-value">91.2K</span>
+                        </div>
+                        <div class="funnel-conversion warning-conv">18.4% conversion</div>
+                        <div class="funnel-stage" style="width: 45%">
+                            <span class="funnel-label">Comments</span>
+                            <span class="funnel-value">16.8K</span>
+                        </div>
+                        <div class="funnel-conversion danger-conv">8.2% conversion</div>
+                        <div class="funnel-stage" style="width: 25%">
+                            <span class="funnel-label">Shares</span>
+                            <span class="funnel-value">1.38K</span>
+                        </div>
+                    </div>
+                    <div class="widget-decision">
+                        <div class="decision-indicator yellow"></div>
+                        <span>ACTION: Biggest leak at Comments-to-Shares (8.2%). Optimize for share signals - add shareable hooks/CTAs.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page 4: Efficiency & Frequency -->
+        <div class="page" id="page4">
+            <div class="page-title">
+                <h2>Efficiency & Frequency Control</h2>
+                <p class="page-desc">Decisions: BID_ADJUST | FREQUENCY_CAP | PLACEMENT_MANAGE | BUDGET_REALLOCATE | STATUS_CHANGE</p>
+            </div>
+
+            <div class="widget-grid">
+                <div class="widget span-6">
+                    <div class="widget-header">
+                        <span class="widget-number">W16</span>
+                        <span class="decision-badge bid">BID_ADJUST</span>
+                    </div>
+                    <div class="widget-question">"Is my acquisition cost improving or degrading?"</div>
+                    <div class="chart-container">
+                        <canvas id="acquisitionEfficiency"></canvas>
+                    </div>
+                    <div class="widget-decision">
+                        <div class="decision-indicator green"></div>
+                        <span>ACTION: Ratio decreasing 4 weeks - scale winning placements, maintain bids</span>
+                    </div>
+                </div>
+
+                <div class="widget span-6">
+                    <div class="widget-header">
+                        <span class="widget-number">W17</span>
+                        <span class="decision-badge frequency">FREQUENCY_CAP</span>
+                    </div>
+                    <div class="widget-question">"Which content is causing audience fatigue?"</div>
+                    <div class="chart-container">
+                        <canvas id="contentFatigue"></canvas>
+                    </div>
+                    <div class="widget-decision">
+                        <div class="decision-indicator red"></div>
+                        <span>ACTION: Cap "Quick Tip #12" to 1x/2weeks (7.1% dislike). Allow "AI Tutorial" up to 3x/week.</span>
+                    </div>
+                </div>
+
+                <div class="widget kpi-widget span-4">
+                    <div class="widget-header">
+                        <span class="widget-number">W18</span>
+                        <span class="decision-badge placement">PLACEMENT_MANAGE</span>
+                    </div>
+                    <div class="widget-question">"Are viewers watching long enough for my message?"</div>
+                    <div class="kpi-content">
+                        <div class="kpi-row">
+                            <div class="kpi-mini">
+                                <div class="kpi-mini-label">Avg Duration</div>
+                                <div class="kpi-mini-value">2:48</div>
+                            </div>
+                            <div class="kpi-mini">
+                                <div class="kpi-mini-label">Prior Period</div>
+                                <div class="kpi-mini-value">2:32</div>
+                                <div class="kpi-delta positive">+10.5%</div>
+                            </div>
+                            <div class="kpi-mini">
+                                <div class="kpi-mini-label">Above 30s</div>
+                                <div class="kpi-mini-value">78%</div>
+                            </div>
+                        </div>
+                        <div class="threshold-bar">
+                            <div class="threshold-fill" style="width: 78%"></div>
+                            <div class="threshold-marker" style="left: 50%">30s min</div>
+                        </div>
+                    </div>
+                    <div class="widget-decision">
+                        <div class="decision-indicator green"></div>
+                        <span>ACTION: Duration > 60s avg - expand to browse/discovery placements</span>
+                    </div>
+                </div>
+
+                <div class="widget span-8">
+                    <div class="widget-header">
+                        <span class="widget-number">W19</span>
+                        <span class="decision-badge budget-reallocate">BUDGET_REALLOCATE</span>
+                    </div>
+                    <div class="widget-question">"Which channels deserve more content investment?"</div>
+                    <div class="chart-container">
+                        <canvas id="channelEngagement"></canvas>
+                    </div>
+                    <div class="widget-decision">
+                        <div class="decision-indicator green"></div>
+                        <span>ACTION: "Main Channel" engagement 2.3x avg - increase budget +30%. "Shorts" 0.4x avg - reduce 25%.</span>
+                    </div>
+                </div>
+
+                <div class="widget span-12">
+                    <div class="widget-header">
+                        <span class="widget-number">W20</span>
+                        <span class="decision-badge status">STATUS_CHANGE</span>
+                    </div>
+                    <div class="widget-question">"Which older content is still performing and which should be retired?"</div>
+                    <div class="chart-container tall">
+                        <canvas id="lifecycleBubble"></canvas>
+                    </div>
+                    <div class="quadrant-legend">
+                        <span class="q-label green-bg">Top-Left: RISING STAR - Scale</span>
+                        <span class="q-label blue-bg">Top-Right: EVERGREEN - Continue</span>
+                        <span class="q-label yellow-bg">Bottom-Left: UNDERPERFORMER - Refresh</span>
+                        <span class="q-label red-bg">Bottom-Right: RETIRE - Pause</span>
+                    </div>
+                    <div class="widget-decision">
+                        <div class="decision-indicator red"></div>
+                        <span>ACTION: Pause 3 videos in "Retire" quadrant (>90d, <1% engagement). Scale 2 "Rising Stars".</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="pages/js/charts.js"></script>
+    <script src="pages/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,887 @@
+{
+  "dashboard": {
+    "name": "YouTube Insights - Decision Engine",
+    "description": "AI-powered YouTube analytics dashboard where every widget drives a specific campaign decision",
+    "version": "1.0",
+    "platform": "Tableau Next",
+    "pages": [
+      {
+        "id": "page_1",
+        "title": "Performance & Budget Optimization",
+        "layout": "grid",
+        "gridColumns": 12,
+        "widgets": [
+          {
+            "id": "w1_view_volume_kpi",
+            "type": "metric_card",
+            "title": "Total View Volume",
+            "position": { "col": 1, "row": 1, "colSpan": 4, "rowSpan": 2 },
+            "question": "What is my total view volume this period vs. target?",
+            "decisionType": "BUDGET_SET",
+            "dataSource": {
+              "measures": [
+                {
+                  "field": "SocialMessageVideoViews",
+                  "aggregation": "SUM",
+                  "alias": "Total Views"
+                }
+              ],
+              "comparison": {
+                "type": "previous_period",
+                "showDelta": true,
+                "deltaFormat": "percent"
+              },
+              "sparkline": {
+                "field": "SocialMessageVideoViews",
+                "aggregation": "SUM",
+                "timeDimension": "Delivery Engagement Summary Date Time",
+                "granularity": "day",
+                "windowDays": 7
+              }
+            },
+            "thresholds": [
+              { "condition": ">=100% of target", "color": "#22C55E", "label": "On Track" },
+              { "condition": "80-99% of target", "color": "#EAB308", "label": "Watch" },
+              { "condition": "<80% of target", "color": "#EF4444", "label": "Action Required" }
+            ],
+            "decisionAction": {
+              "green": "Maintain current budget",
+              "yellow": "Prepare to increase budget 10%",
+              "red": "Increase budget 25%+ immediately"
+            }
+          },
+          {
+            "id": "w2_pacing_line",
+            "type": "line_chart",
+            "title": "Delivery Pacing vs. Target",
+            "position": { "col": 5, "row": 1, "colSpan": 8, "rowSpan": 2 },
+            "question": "Is my content pacing on track to hit period goals?",
+            "decisionType": "PACING_CHANGE",
+            "dataSource": {
+              "dimensions": [
+                {
+                  "field": "Delivery Engagement Summary Date Time",
+                  "granularity": "day",
+                  "axis": "x"
+                }
+              ],
+              "measures": [
+                {
+                  "field": "SocialMessageVideoViews",
+                  "aggregation": "RUNNING_SUM",
+                  "alias": "Actual Cumulative Views",
+                  "lineStyle": "solid",
+                  "color": "#3B82F6"
+                }
+              ],
+              "referenceLines": [
+                {
+                  "type": "calculated",
+                  "formula": "target / days_in_period * day_number",
+                  "alias": "Ideal Pace",
+                  "lineStyle": "dashed",
+                  "color": "#9CA3AF"
+                }
+              ]
+            },
+            "conditionalArea": {
+              "behindPace": { "fill": "#FEE2E2", "opacity": 0.3 },
+              "aheadOfPace": { "fill": "#DCFCE7", "opacity": 0.3 }
+            },
+            "thresholds": [
+              { "condition": "within_10_percent", "color": "#22C55E", "action": "Maintain" },
+              { "condition": "10_to_20_behind", "color": "#EAB308", "action": "Accelerate 15%" },
+              { "condition": "over_20_behind", "color": "#EF4444", "action": "Accelerate 30%+" },
+              { "condition": "over_20_ahead", "color": "#F97316", "action": "Decelerate" }
+            ]
+          },
+          {
+            "id": "w3_channel_efficiency",
+            "type": "stacked_bar_chart",
+            "title": "Channel Budget Efficiency",
+            "position": { "col": 1, "row": 3, "colSpan": 6, "rowSpan": 3 },
+            "question": "Which channels are consuming budget efficiently vs. wasting it?",
+            "decisionType": "BUDGET_REALLOCATE",
+            "dataSource": {
+              "dimensions": [
+                {
+                  "field": "SocialPageName",
+                  "axis": "x",
+                  "sort": "descending_by_measure"
+                }
+              ],
+              "measures": [
+                {
+                  "field": "SocialMessageVideoViews",
+                  "aggregation": "SUM",
+                  "alias": "Views"
+                }
+              ],
+              "colorBy": {
+                "type": "calculated_band",
+                "field": "Engagement Rate",
+                "bands": [
+                  { "label": "High (>5%)", "color": "#22C55E", "min": 5 },
+                  { "label": "Medium (2-5%)", "color": "#EAB308", "min": 2, "max": 5 },
+                  { "label": "Low (<2%)", "color": "#EF4444", "max": 2 }
+                ]
+              }
+            },
+            "decisionAction": {
+              "bottomPerformers": "Reallocate budget from bottom 20% channels to top performers"
+            }
+          },
+          {
+            "id": "w4_view_quality_combo",
+            "type": "combo_chart",
+            "title": "View Quality: Volume vs. Retention",
+            "position": { "col": 7, "row": 3, "colSpan": 6, "rowSpan": 3 },
+            "question": "Are we getting quality views or just volume?",
+            "decisionType": "BID_STRATEGY_CHANGE",
+            "dataSource": {
+              "dimensions": [
+                {
+                  "field": "Delivery Engagement Summary Date Time",
+                  "granularity": "week",
+                  "axis": "x"
+                }
+              ],
+              "measures": [
+                {
+                  "field": "SocialMessageVideoViews",
+                  "aggregation": "SUM",
+                  "alias": "Total Views",
+                  "chartType": "bar",
+                  "axis": "left",
+                  "color": "#3B82F6"
+                },
+                {
+                  "field": "Video Average Duration",
+                  "aggregation": "AVG",
+                  "alias": "Avg View Duration (sec)",
+                  "chartType": "line",
+                  "axis": "right",
+                  "color": "#F97316",
+                  "showMarkers": true
+                }
+              ]
+            },
+            "decisionMatrix": {
+              "viewsUp_durationUp": { "signal": "green", "action": "Maintain strategy - quality growth" },
+              "viewsUp_durationDown": { "signal": "red", "action": "Switch to maximize watch-time bid strategy" },
+              "viewsDown_durationUp": { "signal": "yellow", "action": "Switch to target engagement/ROAS" },
+              "viewsDown_durationDown": { "signal": "red", "action": "Creative refresh + strategy review" }
+            }
+          },
+          {
+            "id": "w5_net_subscriber_waterfall",
+            "type": "waterfall_chart",
+            "title": "Net Subscriber Growth",
+            "position": { "col": 1, "row": 6, "colSpan": 12, "rowSpan": 2 },
+            "question": "What's my net subscriber growth trajectory?",
+            "decisionType": "BUDGET_SET",
+            "dataSource": {
+              "dimensions": [
+                {
+                  "field": "Delivery Engagement Summary Date Time",
+                  "granularity": "week",
+                  "axis": "x"
+                }
+              ],
+              "measures": [
+                {
+                  "field": "SocialPageFansAdded",
+                  "aggregation": "SUM",
+                  "alias": "Gained",
+                  "direction": "positive",
+                  "color": "#22C55E"
+                },
+                {
+                  "field": "SocialPageFansRemoved",
+                  "aggregation": "SUM",
+                  "alias": "Lost",
+                  "direction": "negative",
+                  "color": "#EF4444"
+                }
+              ],
+              "netTotal": {
+                "show": true,
+                "color": "#3B82F6"
+              }
+            },
+            "thresholds": [
+              { "condition": "net_positive_growing", "color": "#22C55E", "action": "Maintain acquisition budget" },
+              { "condition": "net_positive_declining", "color": "#EAB308", "action": "Test new subscriber content" },
+              { "condition": "net_negative_1_week", "color": "#F97316", "action": "Investigate cause" },
+              { "condition": "net_negative_2plus_weeks", "color": "#EF4444", "action": "Increase subscriber budget 50%+" }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "page_2",
+        "title": "Audience & Geographic Targeting",
+        "layout": "grid",
+        "gridColumns": 12,
+        "widgets": [
+          {
+            "id": "w6_geo_map",
+            "type": "filled_map",
+            "title": "Geographic View Distribution",
+            "position": { "col": 1, "row": 1, "colSpan": 7, "rowSpan": 4 },
+            "question": "Where is my audience actually watching from?",
+            "decisionType": "GEO_TARGET",
+            "dataSource": {
+              "geography": {
+                "field": "Country",
+                "level": "country"
+              },
+              "measures": [
+                {
+                  "field": "SocialMessageVideoViews",
+                  "aggregation": "SUM",
+                  "colorScale": "sequential_blue"
+                }
+              ]
+            },
+            "interactions": [
+              {
+                "type": "filter_action",
+                "trigger": "click",
+                "targets": ["w7_geo_engagement", "w9_sub_by_country", "w10_rejection"]
+              }
+            ],
+            "decisionAction": {
+              "high_views_no_targeting": "Add country to targeting (gold highlight)",
+              "active_spend_low_views": "Remove from targeting (red outline)",
+              "50_percent_growth_wow": "Increase geo bid modifier (green pulse)"
+            }
+          },
+          {
+            "id": "w7_geo_engagement",
+            "type": "bar_chart",
+            "title": "Engagement Rate by Country",
+            "position": { "col": 8, "row": 1, "colSpan": 5, "rowSpan": 4 },
+            "question": "Which geos have the most engaged audiences?",
+            "decisionType": ["GEO_TARGET", "BID_ADJUST"],
+            "dataSource": {
+              "dimensions": [
+                {
+                  "field": "Country",
+                  "axis": "y",
+                  "limit": 20,
+                  "sort": "descending_by_measure"
+                }
+              ],
+              "measures": [
+                {
+                  "field": "Engagement Rate",
+                  "type": "calculated",
+                  "formula": "(SUM(likes) + SUM(comments) + SUM(shares)) / SUM(views) * 100",
+                  "alias": "Engagement Rate %"
+                }
+              ],
+              "colorBy": {
+                "type": "diverging",
+                "field": "Engagement Rate",
+                "low": "#EF4444",
+                "mid": "#EAB308",
+                "high": "#22C55E"
+              }
+            },
+            "thresholds": [
+              { "condition": ">5%", "action": "BID_ADJUST: Increase bid modifier +20%" },
+              { "condition": "2-5%", "action": "BID_ADJUST: Maintain current bid" },
+              { "condition": "<2%", "action": "BID_ADJUST: Decrease bid modifier -15%" },
+              { "condition": "<1% + high volume", "action": "BID_ADJUST: Decrease -30% or suppress" }
+            ]
+          },
+          {
+            "id": "w8_activity_heatmap",
+            "type": "heatmap_square",
+            "title": "Audience Activity by Day & Hour",
+            "position": { "col": 1, "row": 5, "colSpan": 6, "rowSpan": 3 },
+            "question": "When is my audience most active?",
+            "decisionType": "SCHEDULE_DAYPART",
+            "dataSource": {
+              "dimensions": [
+                {
+                  "field": "Hour of Day",
+                  "type": "calculated",
+                  "formula": "HOUR(Date.ID)",
+                  "axis": "x",
+                  "range": [0, 23]
+                },
+                {
+                  "field": "Day of Week",
+                  "type": "calculated",
+                  "formula": "DAYOFWEEK(Date.ID)",
+                  "axis": "y",
+                  "labels": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+                }
+              ],
+              "measures": [
+                {
+                  "field": "SocialMessageVideoViews",
+                  "aggregation": "SUM",
+                  "colorScale": "sequential_orange"
+                }
+              ]
+            },
+            "decisionAction": {
+              "top_25_percent_blocks": "Allocate 70% of ad budget to these time slots",
+              "middle_50_percent_blocks": "Allocate 25% of budget",
+              "bottom_25_percent_blocks": "Allocate 5% or exclude entirely"
+            }
+          },
+          {
+            "id": "w9_sub_by_country",
+            "type": "dot_plot",
+            "title": "Subscriber Growth by Country",
+            "position": { "col": 7, "row": 5, "colSpan": 6, "rowSpan": 3 },
+            "question": "Which geos are driving subscriber growth?",
+            "decisionType": "AUDIENCE_EXPAND",
+            "dataSource": {
+              "dimensions": [
+                {
+                  "field": "Country",
+                  "axis": "y"
+                }
+              ],
+              "measures": [
+                {
+                  "field": "SocialPageFansAdded",
+                  "aggregation": "SUM",
+                  "axis": "x"
+                }
+              ],
+              "size": {
+                "field": "Net Subscribers",
+                "formula": "SUM(SocialPageFansAdded) - SUM(SocialPageFansRemoved)"
+              },
+              "colorBy": {
+                "condition": "Net Subscribers > 0",
+                "positive": "#22C55E",
+                "negative": "#EF4444"
+              }
+            },
+            "decisionAction": {
+              "high_growth_positive_net": "AUDIENCE_EXPAND: Create lookalike audiences in this geo",
+              "low_growth": "Maintain current targeting",
+              "negative_net": "Do not expand - investigate content fit"
+            }
+          },
+          {
+            "id": "w10_rejection_table",
+            "type": "table",
+            "title": "Audience Rejection Analysis",
+            "position": { "col": 1, "row": 8, "colSpan": 12, "rowSpan": 2 },
+            "question": "Which audiences are rejecting my content?",
+            "decisionType": "AUDIENCE_SUPPRESS",
+            "dataSource": {
+              "dimensions": [
+                { "field": "Country", "alias": "Country" }
+              ],
+              "measures": [
+                { "field": "SocialMessageVideoViews", "aggregation": "SUM", "alias": "Views" },
+                { "field": "likes", "aggregation": "SUM", "alias": "Likes" },
+                { "field": "dislikes", "aggregation": "SUM", "alias": "Dislikes" },
+                {
+                  "field": "Like/Dislike Ratio",
+                  "type": "calculated",
+                  "formula": "SUM(likes) / (SUM(likes) + SUM(dislikes)) * 100",
+                  "alias": "Like Ratio %"
+                },
+                {
+                  "field": "Dislike Ratio",
+                  "type": "calculated",
+                  "formula": "SUM(dislikes) / SUM(views) * 100",
+                  "alias": "Dislike Rate %"
+                }
+              ],
+              "sort": { "field": "Dislike Ratio", "direction": "descending" },
+              "conditionalFormatting": [
+                { "field": "Dislike Rate %", "rules": [
+                  { "condition": "<3", "backgroundColor": "#DCFCE7" },
+                  { "condition": "3-5", "backgroundColor": "#FEF9C3" },
+                  { "condition": ">5", "backgroundColor": "#FEE2E2" }
+                ]}
+              ]
+            },
+            "thresholds": [
+              { "condition": "Dislike Ratio > 5% AND views > 1000", "action": "AUDIENCE_SUPPRESS: Add to suppression list" },
+              { "condition": "Dislike Ratio > 10%", "action": "AUDIENCE_SUPPRESS: Suppress immediately + investigate" }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "page_3",
+        "title": "Content & Creative Performance",
+        "layout": "grid",
+        "gridColumns": 12,
+        "widgets": [
+          {
+            "id": "w11_video_scatter",
+            "type": "scatter_plot",
+            "title": "Video Performance: Views vs. Retention",
+            "position": { "col": 1, "row": 1, "colSpan": 7, "rowSpan": 4 },
+            "question": "Which videos hook AND retain viewers?",
+            "decisionType": "CREATIVE_MANAGE",
+            "dataSource": {
+              "level": "video",
+              "groupBy": "SocialMessageId",
+              "dimensions": [
+                {
+                  "field": "SocialMessageVideoViews",
+                  "aggregation": "SUM",
+                  "axis": "x",
+                  "alias": "Total Views"
+                },
+                {
+                  "field": "Video Average Duration",
+                  "aggregation": "AVG",
+                  "axis": "y",
+                  "alias": "Avg Duration (sec)"
+                }
+              ],
+              "color": {
+                "field": "Engagement Rate",
+                "scale": "sequential_green"
+              },
+              "size": {
+                "field": "Engagement Total",
+                "formula": "SUM(likes) + SUM(comments) + SUM(shares)"
+              },
+              "tooltip": [
+                { "field": "SocialMessageContent", "alias": "Video Name" },
+                { "field": "SocialMessageImage", "type": "image", "alias": "Thumbnail" }
+              ]
+            },
+            "quadrantLines": {
+              "x": "median",
+              "y": "median",
+              "labels": {
+                "topRight": "PROMOTE - High Views + High Duration",
+                "topLeft": "BOOST - Hidden Gem (High Duration, Low Views)",
+                "bottomRight": "FIX - Clickbait Risk (High Views, Low Duration)",
+                "bottomLeft": "PAUSE - Failing Content"
+              }
+            }
+          },
+          {
+            "id": "w12_engagement_by_video",
+            "type": "bar_chart",
+            "title": "Top Engaging Creatives",
+            "position": { "col": 8, "row": 1, "colSpan": 5, "rowSpan": 4 },
+            "question": "Which creatives generate the most interaction?",
+            "decisionType": ["CREATIVE_MANAGE", "PLACEMENT_MANAGE"],
+            "dataSource": {
+              "dimensions": [
+                {
+                  "field": "SocialMessageContent",
+                  "axis": "y",
+                  "limit": 15,
+                  "sort": "descending_by_measure"
+                }
+              ],
+              "measures": [
+                { "field": "likes", "aggregation": "SUM", "alias": "Likes", "color": "#3B82F6", "stack": true },
+                { "field": "comments", "aggregation": "SUM", "alias": "Comments", "color": "#22C55E", "stack": true },
+                { "field": "shares", "aggregation": "SUM", "alias": "Shares", "color": "#F97316", "stack": true }
+              ]
+            },
+            "decisionAction": {
+              "top_5": "PLACEMENT_MANAGE: Extend to additional placements",
+              "bottom_5": "CREATIVE_MANAGE: Rotate out within 7 days"
+            }
+          },
+          {
+            "id": "w13_video_status_table",
+            "type": "table",
+            "title": "Video Status Decision Matrix",
+            "position": { "col": 1, "row": 5, "colSpan": 12, "rowSpan": 3 },
+            "question": "Which specific videos should I pause, scale, or replace?",
+            "decisionType": "STATUS_CHANGE",
+            "dataSource": {
+              "level": "video",
+              "groupBy": "SocialMessageId",
+              "columns": [
+                { "field": "SocialMessageImage", "type": "image", "width": 60, "alias": "" },
+                { "field": "SocialMessageContent", "alias": "Video Name" },
+                { "field": "SocialMessageVideoViews", "aggregation": "SUM", "alias": "Views", "trendArrow": true },
+                { "field": "Video Average Duration", "aggregation": "AVG", "alias": "Avg Duration" },
+                { "field": "Engagement Rate", "type": "calculated", "alias": "Eng. Rate %" },
+                { "field": "Dislike Ratio", "type": "calculated", "alias": "Dislike %" },
+                { "field": "SocialPageFansAdded", "aggregation": "SUM", "alias": "Subs Gained" },
+                {
+                  "field": "7d_trend",
+                  "type": "calculated",
+                  "formula": "(last_7d_views - prior_7d_views) / prior_7d_views * 100",
+                  "alias": "7d Trend %"
+                }
+              ],
+              "conditionalFormatting": [
+                {
+                  "field": "7d Trend %",
+                  "rules": [
+                    { "condition": "> 20", "backgroundColor": "#DCFCE7", "rowHighlight": true },
+                    { "condition": "-10 to 20", "backgroundColor": "none" },
+                    { "condition": "-20 to -10", "backgroundColor": "#FEF9C3" },
+                    { "condition": "< -20", "backgroundColor": "#FEE2E2", "rowHighlight": true }
+                  ]
+                },
+                {
+                  "field": "Dislike %",
+                  "rules": [
+                    { "condition": "> 5", "textColor": "#EF4444", "bold": true }
+                  ]
+                }
+              ]
+            },
+            "decisionAction": {
+              "red_rows": "STATUS_CHANGE: Pause immediately",
+              "green_rows": "STATUS_CHANGE: Scale - increase budget",
+              "yellow_rows": "STATUS_CHANGE: Monitor - prepare replacement"
+            }
+          },
+          {
+            "id": "w14_topic_treemap",
+            "type": "treemap",
+            "title": "Topic/Keyword Performance",
+            "position": { "col": 1, "row": 8, "colSpan": 7, "rowSpan": 3 },
+            "question": "Which content topics are driving the most traction?",
+            "decisionType": "KEYWORD_MANAGE",
+            "dataSource": {
+              "dimensions": [
+                {
+                  "field": "SocialMessageContentTags",
+                  "type": "parsed_keywords",
+                  "alias": "Topic"
+                }
+              ],
+              "measures": [
+                {
+                  "field": "SocialMessageVideoViews",
+                  "aggregation": "SUM",
+                  "encoding": "size"
+                }
+              ],
+              "color": {
+                "field": "Engagement Rate",
+                "scale": "diverging",
+                "low": "#EF4444",
+                "high": "#22C55E"
+              }
+            },
+            "decisionAction": {
+              "large_green": "KEYWORD_MANAGE: Increase bids + create more content on this topic",
+              "large_red": "KEYWORD_MANAGE: Volume exists but engagement low - investigate quality",
+              "small_green": "KEYWORD_MANAGE: Test with more budget (niche opportunity)",
+              "small_red": "KEYWORD_MANAGE: Reduce bids or remove"
+            }
+          },
+          {
+            "id": "w15_engagement_funnel",
+            "type": "funnel_chart",
+            "title": "Engagement Funnel",
+            "position": { "col": 8, "row": 8, "colSpan": 5, "rowSpan": 3 },
+            "question": "Where is the engagement funnel leaking?",
+            "decisionType": "SIGNAL_CONFIG",
+            "dataSource": {
+              "stages": [
+                { "field": "SocialMessageVideoViews", "aggregation": "SUM", "label": "Views", "color": "#3B82F6" },
+                { "field": "likes", "aggregation": "SUM", "label": "Likes", "color": "#22C55E" },
+                { "field": "comments", "aggregation": "SUM", "label": "Comments", "color": "#EAB308" },
+                { "field": "shares", "aggregation": "SUM", "label": "Shares", "color": "#F97316" }
+              ],
+              "showConversionRates": true
+            },
+            "decisionAction": {
+              "views_to_likes_drop_gt_95": "SIGNAL_CONFIG: Optimize for impression/click signals (thumbnail/hook problem)",
+              "likes_to_comments_drop_gt_90": "SIGNAL_CONFIG: Optimize for comment signals (add CTAs)",
+              "comments_to_shares_drop_gt_85": "SIGNAL_CONFIG: Optimize for share signals (make content more shareable)"
+            }
+          }
+        ]
+      },
+      {
+        "id": "page_4",
+        "title": "Efficiency & Frequency Control",
+        "layout": "grid",
+        "gridColumns": 12,
+        "widgets": [
+          {
+            "id": "w16_acquisition_efficiency",
+            "type": "line_chart",
+            "title": "Acquisition Efficiency Trend",
+            "position": { "col": 1, "row": 1, "colSpan": 6, "rowSpan": 3 },
+            "question": "Is my acquisition cost improving or degrading?",
+            "decisionType": "BID_ADJUST",
+            "dataSource": {
+              "dimensions": [
+                {
+                  "field": "Delivery Engagement Summary Date Time",
+                  "granularity": "week",
+                  "axis": "x"
+                }
+              ],
+              "measures": [
+                {
+                  "field": "Acquisition Cost Ratio",
+                  "type": "calculated",
+                  "formula": "SUM(views) / SUM(subscribersGained)",
+                  "alias": "Views per Subscriber"
+                }
+              ],
+              "referenceLines": [
+                {
+                  "type": "moving_average",
+                  "window": 4,
+                  "lineStyle": "dashed",
+                  "color": "#9CA3AF"
+                }
+              ],
+              "conditionalColor": {
+                "belowAverage": "#22C55E",
+                "aboveAverage": "#EF4444"
+              }
+            },
+            "thresholds": [
+              { "condition": "decreasing_3_weeks", "color": "#22C55E", "action": "Scale winning placements" },
+              { "condition": "stable", "color": "#EAB308", "action": "Maintain current bids" },
+              { "condition": "increasing_2_weeks", "color": "#F97316", "action": "Review placement performance" },
+              { "condition": "increasing_3_plus_weeks", "color": "#EF4444", "action": "Reduce bids on worst placements 20%" }
+            ]
+          },
+          {
+            "id": "w17_content_fatigue",
+            "type": "bar_chart",
+            "title": "Content Fatigue Indicator",
+            "position": { "col": 7, "row": 1, "colSpan": 6, "rowSpan": 3 },
+            "question": "Which content is causing audience fatigue or rejection?",
+            "decisionType": "FREQUENCY_CAP",
+            "dataSource": {
+              "dimensions": [
+                {
+                  "field": "SocialMessageContent",
+                  "axis": "y",
+                  "sort": "descending_by_measure"
+                }
+              ],
+              "measures": [
+                {
+                  "field": "Dislike Ratio",
+                  "type": "calculated",
+                  "formula": "SUM(dislikes) / SUM(views) * 100",
+                  "axis": "x",
+                  "alias": "Dislike Rate %"
+                }
+              ],
+              "color": {
+                "field": "Video Age",
+                "formula": "DATEDIFF(MIN(Date.ID), TODAY(), 'day')",
+                "scale": "sequential_gray_to_dark"
+              },
+              "filter": {
+                "field": "SocialMessageVideoViews",
+                "condition": "> 500"
+              }
+            },
+            "thresholds": [
+              { "condition": "new_video_dislike_lt_2", "action": "FREQUENCY_CAP: Allow up to 3x/week" },
+              { "condition": "any_video_dislike_2_4", "action": "FREQUENCY_CAP: Cap at 2x/week" },
+              { "condition": "old_video_dislike_gt_4", "action": "FREQUENCY_CAP: Cap at 1x/week" },
+              { "condition": "any_video_dislike_gt_7", "action": "FREQUENCY_CAP: Cap 1x/2weeks or pause" },
+              { "condition": "new_video_dislike_gt_5", "action": "FREQUENCY_CAP: Pause immediately" }
+            ]
+          },
+          {
+            "id": "w18_duration_kpi",
+            "type": "metric_card",
+            "title": "View Duration Health",
+            "position": { "col": 1, "row": 4, "colSpan": 4, "rowSpan": 2 },
+            "question": "Are viewers watching long enough for my message to land?",
+            "decisionType": "PLACEMENT_MANAGE",
+            "dataSource": {
+              "cards": [
+                {
+                  "field": "Video Average Duration",
+                  "aggregation": "AVG",
+                  "alias": "Avg Duration (sec)",
+                  "period": "current"
+                },
+                {
+                  "field": "Video Average Duration",
+                  "aggregation": "AVG",
+                  "alias": "Prior Period",
+                  "period": "previous",
+                  "showDelta": true
+                },
+                {
+                  "field": "Video Average Duration",
+                  "type": "calculated",
+                  "formula": "COUNTIF(AVG(Video Average Duration) > 30) / COUNT(*) * 100",
+                  "alias": "% Above 30s Threshold"
+                }
+              ],
+              "benchmark": { "value": 30, "label": "Min Message Delivery (30s)" }
+            },
+            "thresholds": [
+              { "condition": "avg_gt_60s", "color": "#22C55E", "action": "Expand to browse placements" },
+              { "condition": "avg_30_60s", "color": "#EAB308", "action": "Maintain current placement mix" },
+              { "condition": "avg_lt_30s", "color": "#EF4444", "action": "Restrict to high-intent placements only" }
+            ]
+          },
+          {
+            "id": "w19_channel_engagement",
+            "type": "stacked_bar_chart",
+            "title": "Channel Engagement Breakdown",
+            "position": { "col": 5, "row": 4, "colSpan": 8, "rowSpan": 2 },
+            "question": "Which channel pages deserve more content investment?",
+            "decisionType": "BUDGET_REALLOCATE",
+            "dataSource": {
+              "dimensions": [
+                {
+                  "field": "SocialPageName",
+                  "axis": "x",
+                  "sort": "descending_by_measure"
+                }
+              ],
+              "measures": [
+                { "field": "likes", "aggregation": "SUM", "alias": "Likes", "color": "#3B82F6", "stack": true },
+                { "field": "comments", "aggregation": "SUM", "alias": "Comments", "color": "#22C55E", "stack": true },
+                { "field": "shares", "aggregation": "SUM", "alias": "Shares", "color": "#F97316", "stack": true }
+              ],
+              "secondaryLabel": {
+                "field": "Engagement Rate",
+                "format": "percent"
+              }
+            },
+            "thresholds": [
+              { "condition": "engagement_rate_gt_2x_avg", "action": "BUDGET_REALLOCATE: Increase budget +30%" },
+              { "condition": "engagement_rate_0.8_to_2x", "action": "BUDGET_REALLOCATE: Maintain allocation" },
+              { "condition": "engagement_rate_lt_0.5x_avg", "action": "BUDGET_REALLOCATE: Reduce budget 25%" },
+              { "condition": "shares_gt_50_percent", "action": "Prioritize viral/short-form content" }
+            ]
+          },
+          {
+            "id": "w20_content_lifecycle",
+            "type": "bubble_chart",
+            "title": "Content Lifecycle Analysis",
+            "position": { "col": 1, "row": 6, "colSpan": 12, "rowSpan": 3 },
+            "question": "Which older content is still performing and which should be retired?",
+            "decisionType": "STATUS_CHANGE",
+            "dataSource": {
+              "level": "video",
+              "groupBy": "SocialMessageId",
+              "dimensions": [
+                {
+                  "field": "Video Age",
+                  "type": "calculated",
+                  "formula": "DATEDIFF(MIN(Date.ID), TODAY(), 'day')",
+                  "axis": "x",
+                  "alias": "Age (days)"
+                },
+                {
+                  "field": "Engagement Rate",
+                  "type": "calculated",
+                  "axis": "y",
+                  "alias": "Engagement Rate %"
+                }
+              ],
+              "size": {
+                "field": "SocialMessageVideoViews",
+                "aggregation": "SUM"
+              },
+              "color": {
+                "field": "7d_trend",
+                "positive": "#22C55E",
+                "negative": "#EF4444",
+                "stable": "#9CA3AF"
+              },
+              "tooltip": [
+                { "field": "SocialMessageContent" },
+                { "field": "SocialMessageImage", "type": "image" }
+              ]
+            },
+            "quadrantLines": {
+              "x": { "value": 90, "label": "90 days" },
+              "y": { "value": 3, "label": "3% engagement" },
+              "labels": {
+                "topRight": "EVERGREEN - Continue promotion",
+                "topLeft": "RISING STAR - Scale immediately",
+                "bottomRight": "RETIRE - Pause/archive",
+                "bottomLeft": "UNDERPERFORMER - Refresh or kill"
+              }
+            },
+            "decisionAction": {
+              "evergreen": "STATUS_CHANGE: Continue, use as template for new content",
+              "retire": "STATUS_CHANGE: Pause/archive",
+              "rising_star": "STATUS_CHANGE: Increase budget immediately",
+              "underperformer": "STATUS_CHANGE: Creative refresh within 7 days or kill"
+            }
+          }
+        ]
+      }
+    ],
+    "globalFilters": [
+      {
+        "id": "filter_date",
+        "type": "date_picker",
+        "field": "Delivery Engagement Summary Date Time",
+        "default": "last_30_days",
+        "presets": ["last_7_days", "last_14_days", "last_30_days", "last_90_days", "custom"]
+      },
+      {
+        "id": "filter_channel",
+        "type": "multi_select_picker",
+        "field": "SocialPageName",
+        "default": "all",
+        "searchable": true
+      },
+      {
+        "id": "filter_country",
+        "type": "multi_select_picker",
+        "field": "Country",
+        "default": "all",
+        "searchable": true
+      },
+      {
+        "id": "filter_video_search",
+        "type": "text_input",
+        "field": "SocialMessageContent",
+        "placeholder": "Search video name...",
+        "matchType": "contains"
+      },
+      {
+        "id": "filter_min_views",
+        "type": "number_input",
+        "field": "SocialMessageVideoViews",
+        "condition": ">=",
+        "default": 100,
+        "label": "Min Views"
+      }
+    ],
+    "crossFilterActions": [
+      {
+        "source": "w6_geo_map",
+        "targets": ["w7_geo_engagement", "w9_sub_by_country", "w10_rejection_table"],
+        "type": "filter",
+        "trigger": "click"
+      },
+      {
+        "source": "w3_channel_efficiency",
+        "targets": ["w4_view_quality_combo", "w5_net_subscriber_waterfall"],
+        "type": "filter",
+        "trigger": "click"
+      },
+      {
+        "source": "w14_topic_treemap",
+        "targets": ["w11_video_scatter", "w12_engagement_by_video", "w13_video_status_table"],
+        "type": "filter",
+        "trigger": "click"
+      }
+    ]
+  }
+}

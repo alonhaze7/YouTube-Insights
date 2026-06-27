@@ -87,6 +87,30 @@
                         <div class="kpi-target">Target: 2.8M (86% achieved)</div>
                         <canvas id="kpi-sparkline" height="40"></canvas>
                     </div>
+                    <details class="widget-data-source">
+                        <summary>Fields & Calculations</summary>
+                        <div class="ds-content">
+                            <div class="ds-section">
+                                <span class="ds-section-title">Fields Used</span>
+                                <div class="ds-fields">
+                                    <span class="ds-field">views (SocialMessageVideoViews)</span>
+                                    <span class="ds-field">Date.ID</span>
+                                </div>
+                            </div>
+                            <div class="ds-section">
+                                <span class="ds-section-title">Aggregation</span>
+                                <span class="ds-formula">SUM(SocialMessageVideoViews)</span>
+                            </div>
+                            <div class="ds-section">
+                                <span class="ds-section-title">Calculation</span>
+                                <span class="ds-formula">% of Target = SUM(views) / Target * 100</span>
+                            </div>
+                            <div class="ds-section">
+                                <span class="ds-section-title">Comparison</span>
+                                <span class="ds-formula">Delta = (Current Period SUM - Prior Period SUM) / Prior Period SUM * 100</span>
+                            </div>
+                        </div>
+                    </details>
                     <div class="widget-decision">
                         <div class="decision-indicator yellow"></div>
                         <span>ACTION: Prepare to increase budget 10% - pacing slightly behind</span>
@@ -102,6 +126,24 @@
                     <div class="chart-container">
                         <canvas id="pacingChart"></canvas>
                     </div>
+                    <details class="widget-data-source">
+                        <summary>Fields & Calculations</summary>
+                        <div class="ds-content">
+                            <div class="ds-section">
+                                <span class="ds-section-title">Fields Used</span>
+                                <div class="ds-fields">
+                                    <span class="ds-field">views (SocialMessageVideoViews)</span>
+                                    <span class="ds-field">Date.ID (Delivery Engagement Summary Date Time)</span>
+                                </div>
+                            </div>
+                            <div class="ds-section">
+                                <span class="ds-section-title">Calculations</span>
+                                <span class="ds-formula">Actual = RUNNING_SUM(SocialMessageVideoViews) by Day</span>
+                                <span class="ds-formula">Ideal Pace = (Target / days_in_period) * day_number</span>
+                                <span class="ds-formula">Pace Gap % = (Actual - Ideal) / Ideal * 100</span>
+                            </div>
+                        </div>
+                    </details>
                     <div class="widget-decision">
                         <div class="decision-indicator yellow"></div>
                         <span>ACTION: 12% behind pace - consider accelerating promotion spend</span>
@@ -117,6 +159,27 @@
                     <div class="chart-container">
                         <canvas id="channelEfficiency"></canvas>
                     </div>
+                    <details class="widget-data-source">
+                        <summary>Fields & Calculations</summary>
+                        <div class="ds-content">
+                            <div class="ds-section">
+                                <span class="ds-section-title">Fields Used</span>
+                                <div class="ds-fields">
+                                    <span class="ds-field">views (SocialMessageVideoViews)</span>
+                                    <span class="ds-field">channel_name (SocialPageName)</span>
+                                    <span class="ds-field">likes (Social Post Likes)</span>
+                                    <span class="ds-field">comments (Social Post Comments)</span>
+                                    <span class="ds-field">shares (Social Post Shares)</span>
+                                </div>
+                            </div>
+                            <div class="ds-section">
+                                <span class="ds-section-title">Calculations</span>
+                                <span class="ds-formula">Views per Channel = SUM(views) GROUP BY SocialPageName</span>
+                                <span class="ds-formula">Engagement Rate = (SUM(likes) + SUM(comments) + SUM(shares)) / SUM(views) * 100</span>
+                                <span class="ds-formula">Bands: High > 5% | Medium 2-5% | Low < 2%</span>
+                            </div>
+                        </div>
+                    </details>
                     <div class="widget-decision">
                         <div class="decision-indicator red"></div>
                         <span>ACTION: Reallocate 30% from "Shorts" to "Main Channel" - 4x better efficiency</span>
@@ -132,6 +195,25 @@
                     <div class="chart-container">
                         <canvas id="viewQuality"></canvas>
                     </div>
+                    <details class="widget-data-source">
+                        <summary>Fields & Calculations</summary>
+                        <div class="ds-content">
+                            <div class="ds-section">
+                                <span class="ds-section-title">Fields Used</span>
+                                <div class="ds-fields">
+                                    <span class="ds-field">views (SocialMessageVideoViews)</span>
+                                    <span class="ds-field">averageViewDuration (Video Average Duration)</span>
+                                    <span class="ds-field">Date.ID (weekly granularity)</span>
+                                </div>
+                            </div>
+                            <div class="ds-section">
+                                <span class="ds-section-title">Calculations</span>
+                                <span class="ds-formula">Weekly Views = SUM(views) GROUP BY WEEK(Date.ID)</span>
+                                <span class="ds-formula">Avg Duration = AVG(averageViewDuration) GROUP BY WEEK(Date.ID)</span>
+                                <span class="ds-formula">Quality Signal = IF views_trend = UP AND duration_trend = DOWN THEN "Hollow Growth"</span>
+                            </div>
+                        </div>
+                    </details>
                     <div class="widget-decision">
                         <div class="decision-indicator red"></div>
                         <span>ACTION: Views up but duration down 22% - switch to maximize watch-time bid strategy</span>
@@ -147,6 +229,26 @@
                     <div class="chart-container">
                         <canvas id="subscriberWaterfall"></canvas>
                     </div>
+                    <details class="widget-data-source">
+                        <summary>Fields & Calculations</summary>
+                        <div class="ds-content">
+                            <div class="ds-section">
+                                <span class="ds-section-title">Fields Used</span>
+                                <div class="ds-fields">
+                                    <span class="ds-field">subscribersGained (SocialPageFansAdded)</span>
+                                    <span class="ds-field">subscribersLost (SocialPageFansRemoved)</span>
+                                    <span class="ds-field">Date.ID (weekly granularity)</span>
+                                </div>
+                            </div>
+                            <div class="ds-section">
+                                <span class="ds-section-title">Calculations</span>
+                                <span class="ds-formula">Weekly Gained = SUM(subscribersGained) GROUP BY WEEK(Date.ID)</span>
+                                <span class="ds-formula">Weekly Lost = SUM(subscribersLost) GROUP BY WEEK(Date.ID)</span>
+                                <span class="ds-formula">Net Subscribers = SUM(subscribersGained) - SUM(subscribersLost)</span>
+                                <span class="ds-formula">Consecutive Negative = COUNT weeks WHERE Net < 0</span>
+                            </div>
+                        </div>
+                    </details>
                     <div class="widget-decision">
                         <div class="decision-indicator green"></div>
                         <span>ACTION: Net positive 4 consecutive weeks - maintain current acquisition budget</span>
@@ -188,6 +290,24 @@
                             </table>
                         </div>
                     </div>
+                    <details class="widget-data-source">
+                        <summary>Fields & Calculations</summary>
+                        <div class="ds-content">
+                            <div class="ds-section">
+                                <span class="ds-section-title">Fields Used</span>
+                                <div class="ds-fields">
+                                    <span class="ds-field">Country</span>
+                                    <span class="ds-field">views (SocialMessageVideoViews)</span>
+                                </div>
+                            </div>
+                            <div class="ds-section">
+                                <span class="ds-section-title">Calculations</span>
+                                <span class="ds-formula">Views by Country = SUM(views) GROUP BY Country</span>
+                                <span class="ds-formula">% of Total = SUM(views per country) / SUM(all views) * 100</span>
+                                <span class="ds-formula">WoW Growth = (This Week - Last Week) / Last Week * 100</span>
+                            </div>
+                        </div>
+                    </details>
                     <div class="widget-decision">
                         <div class="decision-indicator green"></div>
                         <span>ACTION: Add Brazil & Germany to targeting - 440K untapped views with no active spend</span>
@@ -203,6 +323,25 @@
                     <div class="chart-container">
                         <canvas id="geoEngagement"></canvas>
                     </div>
+                    <details class="widget-data-source">
+                        <summary>Fields & Calculations</summary>
+                        <div class="ds-content">
+                            <div class="ds-section">
+                                <span class="ds-section-title">Fields Used</span>
+                                <div class="ds-fields">
+                                    <span class="ds-field">Country</span>
+                                    <span class="ds-field">likes (Social Post Likes)</span>
+                                    <span class="ds-field">comments (Social Post Comments)</span>
+                                    <span class="ds-field">shares (Social Post Shares)</span>
+                                    <span class="ds-field">views (SocialMessageVideoViews)</span>
+                                </div>
+                            </div>
+                            <div class="ds-section">
+                                <span class="ds-section-title">Calculations</span>
+                                <span class="ds-formula">Engagement Rate = (SUM(likes) + SUM(comments) + SUM(shares)) / SUM(views) * 100 GROUP BY Country</span>
+                            </div>
+                        </div>
+                    </details>
                     <div class="widget-decision">
                         <div class="decision-indicator green"></div>
                         <span>ACTION: Increase India bid +20% (7.2% engagement). Decrease Japan bid -15% (1.1%)</span>
@@ -239,6 +378,25 @@
                             <span>High</span>
                         </div>
                     </div>
+                    <details class="widget-data-source">
+                        <summary>Fields & Calculations</summary>
+                        <div class="ds-content">
+                            <div class="ds-section">
+                                <span class="ds-section-title">Fields Used</span>
+                                <div class="ds-fields">
+                                    <span class="ds-field">Date.ID (Delivery Engagement Summary Date Time)</span>
+                                    <span class="ds-field">views (SocialMessageVideoViews)</span>
+                                </div>
+                            </div>
+                            <div class="ds-section">
+                                <span class="ds-section-title">Calculations</span>
+                                <span class="ds-formula">Hour of Day = HOUR(Date.ID) -- range 0-23</span>
+                                <span class="ds-formula">Day of Week = DAYOFWEEK(Date.ID) -- Mon-Sun</span>
+                                <span class="ds-formula">Heat Value = SUM(views) GROUP BY (Day of Week, Hour of Day)</span>
+                                <span class="ds-formula">Percentile Rank = NTILE(4) OVER (ORDER BY Heat Value)</span>
+                            </div>
+                        </div>
+                    </details>
                     <div class="widget-decision">
                         <div class="decision-indicator green"></div>
                         <span>ACTION: Concentrate 70% budget in 6PM-12AM slots. Exclude 6AM-9AM weekdays.</span>
@@ -254,6 +412,25 @@
                     <div class="chart-container">
                         <canvas id="subGrowthGeo"></canvas>
                     </div>
+                    <details class="widget-data-source">
+                        <summary>Fields & Calculations</summary>
+                        <div class="ds-content">
+                            <div class="ds-section">
+                                <span class="ds-section-title">Fields Used</span>
+                                <div class="ds-fields">
+                                    <span class="ds-field">Country</span>
+                                    <span class="ds-field">subscribersGained (SocialPageFansAdded)</span>
+                                    <span class="ds-field">subscribersLost (SocialPageFansRemoved)</span>
+                                </div>
+                            </div>
+                            <div class="ds-section">
+                                <span class="ds-section-title">Calculations</span>
+                                <span class="ds-formula">Subs Gained = SUM(subscribersGained) GROUP BY Country</span>
+                                <span class="ds-formula">Net Subs = SUM(subscribersGained) - SUM(subscribersLost) GROUP BY Country</span>
+                                <span class="ds-formula">Dot Size = ABS(Net Subs) -- proportional radius</span>
+                            </div>
+                        </div>
+                    </details>
                     <div class="widget-decision">
                         <div class="decision-indicator green"></div>
                         <span>ACTION: Create lookalike audiences in India & Brazil - highest net sub growth</span>
@@ -301,6 +478,26 @@
                             </tr>
                         </tbody>
                     </table>
+                    <details class="widget-data-source">
+                        <summary>Fields & Calculations</summary>
+                        <div class="ds-content">
+                            <div class="ds-section">
+                                <span class="ds-section-title">Fields Used</span>
+                                <div class="ds-fields">
+                                    <span class="ds-field">Country</span>
+                                    <span class="ds-field">views (SocialMessageVideoViews)</span>
+                                    <span class="ds-field">likes (Social Post Likes)</span>
+                                    <span class="ds-field">dislikes (Dislikes)</span>
+                                </div>
+                            </div>
+                            <div class="ds-section">
+                                <span class="ds-section-title">Calculations</span>
+                                <span class="ds-formula">Dislike Rate = SUM(dislikes) / SUM(views) * 100 GROUP BY Country</span>
+                                <span class="ds-formula">Like/Dislike Ratio = SUM(likes) / (SUM(likes) + SUM(dislikes)) * 100</span>
+                                <span class="ds-formula">Suppress Rule: Dislike Rate > 5% AND SUM(views) > 1000</span>
+                            </div>
+                        </div>
+                    </details>
                     <div class="widget-decision">
                         <div class="decision-indicator red"></div>
                         <span>ACTION: Suppress Japan (11.7% dislike rate) & South Korea (6.2%) - content-market mismatch</span>
@@ -326,6 +523,31 @@
                     <div class="chart-container">
                         <canvas id="videoScatter"></canvas>
                     </div>
+                    <details class="widget-data-source">
+                        <summary>Fields & Calculations</summary>
+                        <div class="ds-content">
+                            <div class="ds-section">
+                                <span class="ds-section-title">Fields Used</span>
+                                <div class="ds-fields">
+                                    <span class="ds-field">video.id (SocialMessageId)</span>
+                                    <span class="ds-field">video.name (SocialMessageContent)</span>
+                                    <span class="ds-field">views (SocialMessageVideoViews)</span>
+                                    <span class="ds-field">averageViewDuration (Video Average Duration)</span>
+                                    <span class="ds-field">likes (Social Post Likes)</span>
+                                    <span class="ds-field">comments (Social Post Comments)</span>
+                                    <span class="ds-field">shares (Social Post Shares)</span>
+                                </div>
+                            </div>
+                            <div class="ds-section">
+                                <span class="ds-section-title">Calculations</span>
+                                <span class="ds-formula">X-Axis = SUM(views) GROUP BY video.id</span>
+                                <span class="ds-formula">Y-Axis = AVG(averageViewDuration) GROUP BY video.id</span>
+                                <span class="ds-formula">Bubble Size = SUM(likes) + SUM(comments) + SUM(shares)</span>
+                                <span class="ds-formula">Color = (SUM(likes+comments+shares)) / SUM(views) * 100</span>
+                                <span class="ds-formula">Quadrant Lines = MEDIAN(X), MEDIAN(Y)</span>
+                            </div>
+                        </div>
+                    </details>
                     <div class="widget-decision">
                         <div class="decision-indicator green"></div>
                         <span>ACTION: Promote "AI Tutorial #4" (top-right). Pause "Quick Tip #12" (bottom-left).</span>
@@ -341,6 +563,26 @@
                     <div class="chart-container">
                         <canvas id="engagementByVideo"></canvas>
                     </div>
+                    <details class="widget-data-source">
+                        <summary>Fields & Calculations</summary>
+                        <div class="ds-content">
+                            <div class="ds-section">
+                                <span class="ds-section-title">Fields Used</span>
+                                <div class="ds-fields">
+                                    <span class="ds-field">video.name (SocialMessageContent)</span>
+                                    <span class="ds-field">likes (Social Post Likes)</span>
+                                    <span class="ds-field">comments (Social Post Comments)</span>
+                                    <span class="ds-field">shares (Social Post Shares)</span>
+                                </div>
+                            </div>
+                            <div class="ds-section">
+                                <span class="ds-section-title">Calculations</span>
+                                <span class="ds-formula">Total Engagement = SUM(likes) + SUM(comments) + SUM(shares) GROUP BY video.name</span>
+                                <span class="ds-formula">Stacked: each segment = SUM of respective field per video</span>
+                                <span class="ds-formula">Rank = ROW_NUMBER() OVER (ORDER BY Total Engagement DESC)</span>
+                            </div>
+                        </div>
+                    </details>
                     <div class="widget-decision">
                         <div class="decision-indicator green"></div>
                         <span>ACTION: Extend top 3 to homepage placement. Rotate out bottom 2.</span>
@@ -393,6 +635,30 @@
                             </tr>
                         </tbody>
                     </table>
+                    <details class="widget-data-source">
+                        <summary>Fields & Calculations</summary>
+                        <div class="ds-content">
+                            <div class="ds-section">
+                                <span class="ds-section-title">Fields Used</span>
+                                <div class="ds-fields">
+                                    <span class="ds-field">video.name (SocialMessageContent)</span>
+                                    <span class="ds-field">views (SocialMessageVideoViews)</span>
+                                    <span class="ds-field">averageViewDuration (Video Average Duration)</span>
+                                    <span class="ds-field">likes, comments, shares</span>
+                                    <span class="ds-field">dislikes (Dislikes)</span>
+                                    <span class="ds-field">subscribersGained (SocialPageFansAdded)</span>
+                                    <span class="ds-field">Date.ID</span>
+                                </div>
+                            </div>
+                            <div class="ds-section">
+                                <span class="ds-section-title">Calculations</span>
+                                <span class="ds-formula">Eng Rate = (SUM(likes+comments+shares)) / SUM(views) * 100</span>
+                                <span class="ds-formula">Dislike % = SUM(dislikes) / SUM(views) * 100</span>
+                                <span class="ds-formula">7d Trend = (SUM(views) LAST 7d - SUM(views) PRIOR 7d) / PRIOR 7d * 100</span>
+                                <span class="ds-formula">Status Rule: Trend > +20% = SCALE | < -20% = PAUSE | Dislike > 5% = PAUSE</span>
+                            </div>
+                        </div>
+                    </details>
                     <div class="widget-decision">
                         <div class="decision-indicator red"></div>
                         <span>ACTION: Pause "Quick Tip #12" immediately (6.2% dislike, -38% trend). Scale "AI Tutorial #4" budget +50%.</span>
@@ -415,6 +681,26 @@
                             <div class="treemap-cell tiny yellow-cell">BTS<br><small>45K | 2.1%</small></div>
                         </div>
                     </div>
+                    <details class="widget-data-source">
+                        <summary>Fields & Calculations</summary>
+                        <div class="ds-content">
+                            <div class="ds-section">
+                                <span class="ds-section-title">Fields Used</span>
+                                <div class="ds-fields">
+                                    <span class="ds-field">snippet.title (SocialMessageContentTags)</span>
+                                    <span class="ds-field">views (SocialMessageVideoViews)</span>
+                                    <span class="ds-field">likes, comments, shares</span>
+                                </div>
+                            </div>
+                            <div class="ds-section">
+                                <span class="ds-section-title">Calculations</span>
+                                <span class="ds-formula">Tags = PARSE_KEYWORDS(snippet.title) -- extract topic words</span>
+                                <span class="ds-formula">Tile Size = SUM(views) GROUP BY Tag</span>
+                                <span class="ds-formula">Tile Color = Engagement Rate per Tag = (likes+comments+shares)/views*100</span>
+                                <span class="ds-formula">Quadrant: Large+Green = Win | Small+Red = Remove</span>
+                            </div>
+                        </div>
+                    </details>
                     <div class="widget-decision">
                         <div class="decision-indicator green"></div>
                         <span>ACTION: Increase bids on "AI/ML" keywords +25%. Remove "Quick Tips" keywords.</span>
@@ -448,6 +734,29 @@
                             <span class="funnel-value">1.38K</span>
                         </div>
                     </div>
+                    <details class="widget-data-source">
+                        <summary>Fields & Calculations</summary>
+                        <div class="ds-content">
+                            <div class="ds-section">
+                                <span class="ds-section-title">Fields Used</span>
+                                <div class="ds-fields">
+                                    <span class="ds-field">views (SocialMessageVideoViews)</span>
+                                    <span class="ds-field">likes (Social Post Likes)</span>
+                                    <span class="ds-field">comments (Social Post Comments)</span>
+                                    <span class="ds-field">shares (Social Post Shares)</span>
+                                </div>
+                            </div>
+                            <div class="ds-section">
+                                <span class="ds-section-title">Calculations</span>
+                                <span class="ds-formula">Stage 1 = SUM(views)</span>
+                                <span class="ds-formula">Stage 2 = SUM(likes)</span>
+                                <span class="ds-formula">Stage 3 = SUM(comments)</span>
+                                <span class="ds-formula">Stage 4 = SUM(shares)</span>
+                                <span class="ds-formula">Conversion Rate = Stage[N] / Stage[N-1] * 100</span>
+                                <span class="ds-formula">Biggest Leak = MIN(Conversion Rate) across stages</span>
+                            </div>
+                        </div>
+                    </details>
                     <div class="widget-decision">
                         <div class="decision-indicator yellow"></div>
                         <span>ACTION: Biggest leak at Comments-to-Shares (8.2%). Optimize for share signals - add shareable hooks/CTAs.</span>
@@ -473,6 +782,25 @@
                     <div class="chart-container">
                         <canvas id="acquisitionEfficiency"></canvas>
                     </div>
+                    <details class="widget-data-source">
+                        <summary>Fields & Calculations</summary>
+                        <div class="ds-content">
+                            <div class="ds-section">
+                                <span class="ds-section-title">Fields Used</span>
+                                <div class="ds-fields">
+                                    <span class="ds-field">views (SocialMessageVideoViews)</span>
+                                    <span class="ds-field">subscribersGained (SocialPageFansAdded)</span>
+                                    <span class="ds-field">Date.ID (weekly granularity)</span>
+                                </div>
+                            </div>
+                            <div class="ds-section">
+                                <span class="ds-section-title">Calculations</span>
+                                <span class="ds-formula">Acquisition Ratio = SUM(views) / SUM(subscribersGained) per week</span>
+                                <span class="ds-formula">4-Week Moving Avg = AVG(Acquisition Ratio) OVER (ROWS BETWEEN 3 PRECEDING AND CURRENT)</span>
+                                <span class="ds-formula">Trend = IF ratio decreasing 3+ weeks THEN "Efficient" ELSE "Degrading"</span>
+                            </div>
+                        </div>
+                    </details>
                     <div class="widget-decision">
                         <div class="decision-indicator green"></div>
                         <span>ACTION: Ratio decreasing 4 weeks - scale winning placements, maintain bids</span>
@@ -488,6 +816,26 @@
                     <div class="chart-container">
                         <canvas id="contentFatigue"></canvas>
                     </div>
+                    <details class="widget-data-source">
+                        <summary>Fields & Calculations</summary>
+                        <div class="ds-content">
+                            <div class="ds-section">
+                                <span class="ds-section-title">Fields Used</span>
+                                <div class="ds-fields">
+                                    <span class="ds-field">video.name (SocialMessageContent)</span>
+                                    <span class="ds-field">dislikes (Dislikes)</span>
+                                    <span class="ds-field">views (SocialMessageVideoViews)</span>
+                                    <span class="ds-field">Date.ID</span>
+                                </div>
+                            </div>
+                            <div class="ds-section">
+                                <span class="ds-section-title">Calculations</span>
+                                <span class="ds-formula">Dislike Rate = SUM(dislikes) / SUM(views) * 100 GROUP BY video.name</span>
+                                <span class="ds-formula">Video Age = DATEDIFF(MIN(Date.ID), TODAY(), 'day')</span>
+                                <span class="ds-formula">Cap Rule: Age > 30d AND Dislike > 4% = 1x/week | Dislike > 7% = 1x/2weeks</span>
+                            </div>
+                        </div>
+                    </details>
                     <div class="widget-decision">
                         <div class="decision-indicator red"></div>
                         <span>ACTION: Cap "Quick Tip #12" to 1x/2weeks (7.1% dislike). Allow "AI Tutorial" up to 3x/week.</span>
@@ -521,6 +869,26 @@
                             <div class="threshold-marker" style="left: 50%">30s min</div>
                         </div>
                     </div>
+                    <details class="widget-data-source">
+                        <summary>Fields & Calculations</summary>
+                        <div class="ds-content">
+                            <div class="ds-section">
+                                <span class="ds-section-title">Fields Used</span>
+                                <div class="ds-fields">
+                                    <span class="ds-field">averageViewDuration (Video Average Duration)</span>
+                                    <span class="ds-field">Date.ID</span>
+                                </div>
+                            </div>
+                            <div class="ds-section">
+                                <span class="ds-section-title">Calculations</span>
+                                <span class="ds-formula">Avg Duration = AVG(averageViewDuration) -- current period</span>
+                                <span class="ds-formula">Prior Period = AVG(averageViewDuration) -- previous equal period</span>
+                                <span class="ds-formula">Delta = (Current - Prior) / Prior * 100</span>
+                                <span class="ds-formula">% Above 30s = COUNT(videos WHERE AVG(duration) > 30) / COUNT(all videos) * 100</span>
+                                <span class="ds-formula">Threshold: > 60s = Expand | 30-60s = Maintain | < 30s = Restrict</span>
+                            </div>
+                        </div>
+                    </details>
                     <div class="widget-decision">
                         <div class="decision-indicator green"></div>
                         <span>ACTION: Duration > 60s avg - expand to browse/discovery placements</span>
@@ -536,6 +904,29 @@
                     <div class="chart-container">
                         <canvas id="channelEngagement"></canvas>
                     </div>
+                    <details class="widget-data-source">
+                        <summary>Fields & Calculations</summary>
+                        <div class="ds-content">
+                            <div class="ds-section">
+                                <span class="ds-section-title">Fields Used</span>
+                                <div class="ds-fields">
+                                    <span class="ds-field">channel_name (SocialPageName)</span>
+                                    <span class="ds-field">likes (Social Post Likes)</span>
+                                    <span class="ds-field">comments (Social Post Comments)</span>
+                                    <span class="ds-field">shares (Social Post Shares)</span>
+                                    <span class="ds-field">views (SocialMessageVideoViews)</span>
+                                </div>
+                            </div>
+                            <div class="ds-section">
+                                <span class="ds-section-title">Calculations</span>
+                                <span class="ds-formula">Engagement per Channel = SUM(likes+comments+shares) GROUP BY channel_name</span>
+                                <span class="ds-formula">Channel Eng Rate = SUM(likes+comments+shares) / SUM(views) * 100</span>
+                                <span class="ds-formula">Portfolio Avg = AVG(Channel Eng Rate) across all channels</span>
+                                <span class="ds-formula">Multiplier = Channel Eng Rate / Portfolio Avg</span>
+                                <span class="ds-formula">Rule: > 2x avg = +30% budget | < 0.5x avg = -25% budget</span>
+                            </div>
+                        </div>
+                    </details>
                     <div class="widget-decision">
                         <div class="decision-indicator green"></div>
                         <span>ACTION: "Main Channel" engagement 2.3x avg - increase budget +30%. "Shorts" 0.4x avg - reduce 25%.</span>
@@ -557,6 +948,30 @@
                         <span class="q-label yellow-bg">Bottom-Left: UNDERPERFORMER - Refresh</span>
                         <span class="q-label red-bg">Bottom-Right: RETIRE - Pause</span>
                     </div>
+                    <details class="widget-data-source">
+                        <summary>Fields & Calculations</summary>
+                        <div class="ds-content">
+                            <div class="ds-section">
+                                <span class="ds-section-title">Fields Used</span>
+                                <div class="ds-fields">
+                                    <span class="ds-field">video.id (SocialMessageId)</span>
+                                    <span class="ds-field">video.name (SocialMessageContent)</span>
+                                    <span class="ds-field">views (SocialMessageVideoViews)</span>
+                                    <span class="ds-field">likes, comments, shares</span>
+                                    <span class="ds-field">Date.ID</span>
+                                </div>
+                            </div>
+                            <div class="ds-section">
+                                <span class="ds-section-title">Calculations</span>
+                                <span class="ds-formula">X-Axis: Video Age = DATEDIFF(MIN(Date.ID per video), TODAY(), 'day')</span>
+                                <span class="ds-formula">Y-Axis: Engagement Rate = (SUM(likes+comments+shares)) / SUM(views) * 100</span>
+                                <span class="ds-formula">Bubble Size = SUM(views) per video</span>
+                                <span class="ds-formula">Color: 7d Trend = (Last 7d views - Prior 7d views) / Prior 7d * 100</span>
+                                <span class="ds-formula">Quadrants: X=90 days, Y=3% engagement</span>
+                                <span class="ds-formula">Evergreen: Age > 90 AND Eng > 3% | Retire: Age > 90 AND Eng < 1%</span>
+                            </div>
+                        </div>
+                    </details>
                     <div class="widget-decision">
                         <div class="decision-indicator red"></div>
                         <span>ACTION: Pause 3 videos in "Retire" quadrant (>90d, <1% engagement). Scale 2 "Rising Stars".</span>

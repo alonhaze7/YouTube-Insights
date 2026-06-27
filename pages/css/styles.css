@@ -531,6 +531,91 @@ body {
 .yellow-bg { background: rgba(234, 179, 8, 0.15); color: #fde047; }
 .red-bg { background: rgba(239, 68, 68, 0.15); color: #fca5a5; }
 
+/* ===== DATA SOURCE / FIELDS SECTION ===== */
+.widget-data-source {
+    margin-top: 12px;
+    padding: 10px 14px;
+    background: rgba(59, 130, 246, 0.05);
+    border: 1px solid rgba(59, 130, 246, 0.15);
+    border-radius: 8px;
+    font-size: 0.75rem;
+}
+
+.widget-data-source summary {
+    cursor: pointer;
+    color: var(--accent-blue);
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.widget-data-source summary::before {
+    content: "\25B6";
+    font-size: 0.6rem;
+    transition: transform 0.2s;
+}
+
+.widget-data-source[open] summary::before {
+    transform: rotate(90deg);
+}
+
+.widget-data-source .ds-content {
+    margin-top: 10px;
+    display: grid;
+    gap: 8px;
+}
+
+.ds-section {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.ds-section-title {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    font-weight: 700;
+}
+
+.ds-fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.ds-field {
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    font-family: 'SF Mono', 'Fira Code', monospace;
+}
+
+.ds-field.calc {
+    border-color: rgba(168, 85, 247, 0.4);
+    background: rgba(168, 85, 247, 0.08);
+    color: #c4b5fd;
+}
+
+.ds-formula {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 0.7rem;
+    color: #c4b5fd;
+    background: var(--bg-primary);
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid rgba(168, 85, 247, 0.3);
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 1200px) {
     .widget-grid { grid-template-columns: repeat(6, 1fr); }

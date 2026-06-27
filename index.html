@@ -75,7 +75,7 @@
 
             <div class="widget-grid">
                 <!-- KPI Cards Row -->
-                <div class="widget kpi-widget span-6">
+                <div class="widget kpi-widget span-12">
                     <div class="widget-header">
                         <span class="widget-number">W1</span>
                         <span class="decision-badge budget-set">BUDGET_SET</span>
@@ -83,9 +83,13 @@
                     <div class="widget-question">"What is my total view volume this period vs. target?"</div>
                     <div class="kpi-content">
                         <div class="kpi-value">2.4M</div>
-                        <div class="kpi-delta positive">+18.2% vs prior period</div>
-                        <div class="kpi-target">Target: 2.8M (86% achieved)</div>
-                        <canvas id="kpi-sparkline" height="40"></canvas>
+                        <div class="kpi-meta">
+                            <div class="kpi-delta positive">+18.2% vs prior period</div>
+                            <div class="kpi-target">Target: 2.8M (86% achieved)</div>
+                        </div>
+                        <div class="kpi-sparkline-wrap">
+                            <canvas id="kpi-sparkline" height="50"></canvas>
+                        </div>
                     </div>
                     <details class="widget-data-source">
                         <summary>Fields & Calculations</summary>
@@ -117,7 +121,7 @@
                     </div>
                 </div>
 
-                <div class="widget span-6">
+                <div class="widget span-12">
                     <div class="widget-header">
                         <span class="widget-number">W2</span>
                         <span class="decision-badge pacing">PACING_CHANGE</span>
